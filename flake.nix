@@ -26,6 +26,17 @@
               '';
             };
         };
+        apps.install-deps = {
+          type = "app";
+          program = with pkgs;
+            writeShellApplication {
+              name = "replicad-install-deps";
+              runtimeInputs = [nodejs];
+              text = ''
+                npm i --include=dev
+              '';
+            };
+        };
       };
     });
 }
