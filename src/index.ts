@@ -1,13 +1,16 @@
+import { Shape3D, SimplePoint } from "replicad";
 import { replicadLib, parType } from "./prelude"
 import { defaultParams } from "./params";
 
-import contactM from "./contact"
-import layoutM from "./layout"
+import contactM from "./contactMTA"
 
 function main(rc: replicadLib, par: parType) {
-  let contact = contactM(rc, par);
-  let layout = layoutM(rc, par);
-  return layout;
+
+  let { hole, pos } = contactM(rc, par);
+  return pos.cut(hole);
 };
 
-export { main, defaultParams }
+export {
+  main,
+  defaultParams
+}

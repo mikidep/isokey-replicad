@@ -19,10 +19,12 @@
           type = "app";
           program = with pkgs;
             writeShellApplication {
-              name = "replicad-webpack-watch";
-              runtimeInputs = [webpack-cli];
+              name = "replicad-bun-watch";
+              runtimeInputs = [bun];
               text = ''
-                webpack build -c ./webpack.config.ts -w
+                bun build ./src/index.ts \
+                  --outfile ./dist/bundle.js \
+                  --format esm --watch
               '';
             };
         };
@@ -31,9 +33,9 @@
           program = with pkgs;
             writeShellApplication {
               name = "replicad-install-deps";
-              runtimeInputs = [nodejs];
+              runtimeInputs = [bun];
               text = ''
-                npm i --include=dev
+                bun install
               '';
             };
         };

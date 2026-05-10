@@ -5,17 +5,12 @@ import switchHoleM from "./switchHole";
 export default (rc: replicadLib, par: parType) => {
   const {
     drawPolysides,
-    drawRectangle,
     Vector
   } = rc;
 
   const {
     kkd,
-    plateTh,
-    snapTh,
-    snapD,
-    snapW,
-    switchSide
+    plateTh
   } = par;
 
   const mkSwitchHole = switchHoleM(rc, par);
@@ -24,7 +19,6 @@ export default (rc: replicadLib, par: parType) => {
     let [x, y, _] = vector.toTuple();
     return [x, y];
   };
-
 
   function fuseAll(shapes: Drawing[]): Drawing {
     if (shapes.length == 0) throw "fuseAll must be called with non-empty array";
