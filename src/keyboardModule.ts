@@ -2,7 +2,7 @@ import { replicadLib, parType } from "./prelude"
 
 import layoutM from "./layout"
 import switchM from "./switch"
-import { fusedCopies3D } from "./utils"
+import { fusedCopies3D, fusedCopiesDrawing } from "./utils"
 
 export default (rc: replicadLib, par: parType) => {
   let { Vector, makeCylinder } = rc;
@@ -14,7 +14,9 @@ export default (rc: replicadLib, par: parType) => {
 
   let keyPositions = mkKeyPositions(rows, cols);
 
-  let stile = tile.sketchOnPlane("XY").extrude(-plateTh);
+  let plateDrawing = fusedCopiesDrawing(tile, keyPositions);
+
+  let stile = tile.clone().sketchOnPlane("XY").extrude(-plateTh);
   let kmcontacts = stile.clone()
     // @ts-ignore
     .fuse(swCPos)
@@ -22,15 +24,16 @@ export default (rc: replicadLib, par: parType) => {
   let kmplate = stile.clone()
     // @ts-ignore
     .cut(mkSwitchHole());
+  // TODO: improve
   let screws = [
-    new Vector(fromUV(1.5, 1)).add(new Vector([0, 8])),
-    new Vector(fromUV(3.5, 1)).add(new Vector([0, 8]))
+    new Vector(fromUV(1.5, Math.floor((rows - 1) / 2))).add(new Vector([0, 8])),
+    new Vector(fromUV(3.5, Math.floor((rows - 1) / 2))).add(new Vector([0, 8]))
   ];
   let pegs = [
     fromUV(0.5, 0),
-    fromUV(4.5, 0),
-    fromUV(-0.5, 3),
-    fromUV(3.5, 3),
+    fromUV(cols - 1.5, 0),
+    fromUV(0.5 - Math.floor((rows - 1) / 2), rows - 1),
+    fromUV(cols - 1.5 - Math.floor((rows - 1) / 2), rows - 1),
   ];
   const cylBelow = (r: number, h: number) =>
     makeCylinder(r, h, [0, 0, 0], [0, 0, -1])
@@ -68,5 +71,5 @@ export default (rc: replicadLib, par: parType) => {
     .fuse(boardShPos)
     .cut(boardShNeg);
 
-  return { boardModule, plateModule }
+  return { boardModule, plateModule, plateDrawing, screws }
 };

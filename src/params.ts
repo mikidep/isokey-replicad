@@ -14,8 +14,8 @@ export const defaultParams = {
   plateTh: 2,
   switchParams: cherryParams,
   modSize: {
-    rows: 4,
-    cols: 6
+    rows: 8,
+    cols: 8
   },
   screwD: 3,
   pegD: 3,
