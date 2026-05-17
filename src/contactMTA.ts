@@ -1,12 +1,9 @@
-import { SketchInterface } from "replicad";
 import { replicadLib, parType } from "./prelude"
 import { alignBack, alignFront, alignTop } from "./utils"
 
 const SHEET_TH = 0.318;
-const CONTACT_H = 11.481;
 const HOLE_DEPTH_SHEET = 1.5 * SHEET_TH;
 const HOLE_DEPTH = 1.8;
-const HOLE_DEPTH_HDR = 2;
 const HOLE_H = 7.3;
 const HOLE_H2 = 8.7;
 const HOLE_W = 3;
@@ -53,7 +50,7 @@ export default (rc: replicadLib, { }: parType) => {
     HOLE_W + 2 * SHELL_TH,
     HOLE_DEPTH + 2 * SHELL_TH
   );
-  let posFace2 = posFace1.clone().scale(1.8);
+  let posFace2 = posFace1.clone().scale(1.4);
   let pos = posFace2.sketchOnPlane("XY")
     // @ts-ignore
     .loftWith(posFace1.sketchOnPlane("XY", -HOLE_H))
