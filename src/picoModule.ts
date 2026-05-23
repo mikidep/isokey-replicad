@@ -1,5 +1,5 @@
 import { replicadLib, parType } from "./prelude"
-import { fusedCopies3D, align, project2D } from "./utils"
+import { fusedCopies, align, project2D } from "./utils"
 
 import modCommonM from "./modCommon"
 import { ModExport } from "./modCommon"
@@ -19,54 +19,44 @@ export default (rc: replicadLib, par: parType): ModExport => {
     new Vector([-10, 0]),
     new Vector([-40, 0]),
   ];
-  let plateShPos = fusedCopies3D(
-    plateScrewPos,
-    screws
-  );
-  let plateShNeg = fusedCopies3D(
-    plateScrewNeg,
-    screws
-  );
-  let boardShPos = fusedCopies3D(
-    boardScrewPos,
-    screws
-  );
-  let boardShNeg = fusedCopies3D(
-    boardScrewNeg,
-    screws
-  );
+  let plateShPos = fusedCopies(plateScrewPos, screws);
+  let plateShNeg = fusedCopies(plateScrewNeg, screws);
+  let boardShPos = fusedCopies(boardScrewPos, screws);
+  let boardShNeg = fusedCopies(boardScrewNeg, screws);
 
-  let headerCutout = align("2D",
+  let headerCutout = align("right",
     drawRectangle(
       2.54 * pinL + 1,
       2.54 + 0.5
-    ),
-    "right");
+    ));
   // cutting from drawing is broken
-  let plateDrawing = align("2D",
+  let plateDrawing = align("right",
     drawRectangle(
       2.54 * pinL + 10,
       2.54 * pinW + 10
-    ), "right").cut(headerCutout.clone().translate(-2,
-      2.54 * (pinW - 1) / 2
-    )).cut(headerCutout.clone().translate(-2,
-      -2.54 * (pinW - 1) / 2
     ))
+    // .cut(headerCutout.clone().translate(-2,
+    //   2.54 * (pinW - 1) / 2
+    // ))
+    // .cut(headerCutout.clone().translate(-2,
+    //   -2.54 * (pinW - 1) / 2
+    // ))
     ;
-
+  //
   let plateBase = plateDrawing
     .sketchOnPlane("XY").extrude(-plateTh)
     .asShape3D()
     ;
-  let plateModule = () => plateBase.asShape3D()
-    .fuse(plateShPos)
-    .cut(plateShNeg);
-  let boardModule = () => plateBase.asShape3D()
-    .fuse(boardShPos)
-    .cut(boardShNeg);
+  // let plateModule = () => plateBase.asShape3D()
+  //   .fuse(plateShPos)
+  //   .cut(plateShNeg);
+  // let boardModule = () => plateBase.asShape3D()
+  //   .fuse(boardShPos)
+  //   .cut(boardShNeg);
 
-  return {
-    boardModule, plateModule, plateDrawing,
-    screws: screws.map(project2D)
-  }
+  // return {
+  //   boardModule, plateModule, plateDrawing,
+  //   screws: screws.map(project2D)
+  // }
+  return {} as never
 };

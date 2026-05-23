@@ -5,22 +5,10 @@ import {
 // yeesh
 export const range = (n: number) => [...Array(n).keys()];
 
-type Dim = "2D" | "3D";
+type Side2D = "left" | "right" | "bot" | "top";
+type Side3D = Side2D | "front" | "back";
 
-type CaseDim<L extends Dim, Case2, Case3>
-  = L extends "2D" ? Case2 : Case3;
-
-type Side2D =
-  "left" | "right" | "bot" | "top";
-
-type Side3D =
-  Side2D | "front" | "back";
-
-type Side<L extends Dim> = CaseDim<L, Side2D, Side3D>;
-type PointR<L extends Dim> = CaseDim<L, Point2D, SimplePoint>;
-type Shp<L extends Dim> = CaseDim<L, Drawing, Shape3D>
-
-function compBdsIdx2D(side: Side<"2D">): [number, number] {
+function compBdsIdx2D(side: Side2D): [number, number] {
   switch (side) {
     case "left": return [0, 0];
     case "right": return [1, 0];
@@ -29,7 +17,7 @@ function compBdsIdx2D(side: Side<"2D">): [number, number] {
   }
 }
 
-function compBdsIdx3D(side: Side<"3D">): [number, number] {
+function compBdsIdx3D(side: Side3D): [number, number] {
   switch (side) {
     case "left": return [0, 0];
     case "right": return [1, 0];
@@ -40,59 +28,66 @@ function compBdsIdx3D(side: Side<"3D">): [number, number] {
   }
 }
 
-export function alignOffs<L extends Dim>
-  (dim: L, s: Shp<L>, side: Side<L>): PointR<L> {
-  let [i, j] = [0, 0];
-  if (dim == "2D") {
-    //@ts-expect-error: does TS not restrict L?
-    [i, j] = compBdsIdx2D(side);
-  }
-  else {
-    [i, j] = compBdsIdx3D(side);
-  }
+function alignOffs2D(side: Side2D, s: Drawing): Point2D {
+  let [i, j] = compBdsIdx2D(side);
   let delta = s.boundingBox.bounds[i][j];
-  if (dim == "2D") {
-    let tr: Point2D = [0, 0];
-    tr[j] = -delta;
-    //@ts-expect-error
-    return tr;
-  }
-  else {
-    let tr: SimplePoint = [0, 0, 0];
-    tr[j] = -delta;
-    //@ts-expect-error
-    return tr;
+  let tr: Point2D = [0, 0];
+  tr[j] = -delta;
+  return tr;
+}
+
+function alignOffs3D(side: Side3D, s: Shape3D): SimplePoint {
+  let [i, j] = compBdsIdx3D(side);
+  let delta = s.boundingBox.bounds[i][j];
+  let tr: SimplePoint = [0, 0, 0];
+  tr[j] = -delta;
+  return tr;
+}
+
+export function alignOffs(side: Side2D, s: Drawing): Point2D;
+export function alignOffs(side: Side3D, s: Shape3D): SimplePoint;
+export function alignOffs
+  (side: Side2D | Side3D, s: Drawing | Shape3D):
+  Point2D | SimplePoint {
+  if (s instanceof Drawing) {
+    return alignOffs2D(side as Side2D, s);
+  } else {
+    return alignOffs3D(side as Side3D, s);
   }
 }
 
-export function align<L extends Dim>
-  (dim: L, s: Shp<L>, side: Side<L>): Shp<L> {
-  //@ts-expect-error
-  return s.translate(alignOffs(dim, s, side));
+export function align(side: Side2D, s: Drawing): Drawing;
+export function align(side: Side3D, s: Shape3D): Shape3D;
+export function align
+  (side: Side2D | Side3D, s: Drawing | Shape3D):
+  Drawing | Shape3D {
+  console.log(s.constructor)
+  if (s instanceof Drawing) {
+    return s.translate(alignOffs(side as Side2D, s));
+  } else {
+    return s.translate(alignOffs(side as Side3D, s));
+  }
 }
 
 export const project2D = (v: Vector): Point2D => [v.x, v.y];
 
-export function fuseAllDrawings(drws: Drawing[]): Drawing {
-  if (drws.length == 0)
-    throw "fuseAllDrawings must be called with non-empty array";
-  return drws.reduce((r, x) => r.fuse(x));
+export function fuseAll(ss: Drawing[]): Drawing;
+export function fuseAll(ss: Shape3D[]): Shape3D;
+export function fuseAll(ss: Drawing[] | Shape3D[]):
+  Drawing | Shape3D {
+  if (ss.length == 0)
+    throw "fuseAll must be called with non-empty array";
+  //@ts-expect-error
+  return ss.reduce((r, x) => r.fuse(x));
 };
 
-export const fusedCopiesDrawing = (shape: Drawing, ps: Vector[]) =>
-  fuseAllDrawings(
-    ps.map(v => shape.clone().translate(project2D(v)))
-  );
-
-export function fuseAll3D(drws: Shape3D[]): Shape3D {
-  if (drws.length == 0)
-    throw "fuseAll3D must be called with non-empty array";
-  return drws.reduce((r, x) => r.fuse(x));
-};
-
-export const fusedCopies3D = (shape: Shape3D, ps: Vector[]) =>
-  fuseAll3D(
-    ps.map(v => shape.clone().translate(v))
-  );
-
-
+export function fusedCopies(s: Drawing, ps: Vector[]): Drawing;
+export function fusedCopies(s: Shape3D, ps: Vector[]): Shape3D;
+export function fusedCopies(s: Drawing | Shape3D, ps: Vector[])
+  : Drawing | Shape3D {
+  if (s instanceof Drawing) {
+    return fuseAll(ps.map(v => s.clone().translate(project2D(v))));
+  } else {
+    return fuseAll(ps.map(v => s.clone().translate(v)));
+  }
+}

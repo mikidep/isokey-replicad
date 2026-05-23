@@ -18,13 +18,11 @@ export default (rc: replicadLib, { }: parType) => {
     drawRectangle
   } = rc;
 
-  let hole = align("3D", makeBaseBox(HOLE_W2, HOLE_DEPTH, HOLE_H), "back")
-    .fuse(align("3D",
-      makeBaseBox(HOLE_W, HOLE_DEPTH_SHEET, HOLE_H), "back"
-    ))
-    .fuse(align("3D",
-      makeBaseBox(HOLE_W, HOLE_DEPTH, HOLE_H2 - HOLE_H), "back"
-    ))
+  let hole = align("back", makeBaseBox(HOLE_W2, HOLE_DEPTH, HOLE_H))
+    .fuse(align("back",
+      makeBaseBox(HOLE_W, HOLE_DEPTH_SHEET, HOLE_H)))
+    .fuse(align("back",
+      makeBaseBox(HOLE_W, HOLE_DEPTH, HOLE_H2 - HOLE_H)))
     ;
   let wedge = draw()
     .lineTo([-SHELL_TH, 0])
@@ -37,12 +35,9 @@ export default (rc: replicadLib, { }: parType) => {
     .asShape3D()
     ;
 
-  hole = align("3D", hole, "top")
-    .fuse(align("3D",
-      makeBaseBox(1, 3 * SHELL_TH, 2.5)
-        .translateZ(-HOLDER_Z),
-      "front"
-    ))
+  hole = align("top", hole)
+    .fuse(align("front",
+      makeBaseBox(1, 3 * SHELL_TH, 2.5).translateZ(-HOLDER_Z)))
     .fuse(wedge)
     .translateY(HOLE_DEPTH / 2)
     ;
