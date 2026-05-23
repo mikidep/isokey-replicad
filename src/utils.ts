@@ -28,7 +28,7 @@ function compBdsIdx3D(side: Side3D): [number, number] {
   }
 }
 
-function alignOffs2D(side: Side2D, s: Drawing): Point2D {
+export function alignOffs2D(side: Side2D, s: Drawing): Point2D {
   let [i, j] = compBdsIdx2D(side);
   let delta = s.boundingBox.bounds[i][j];
   let tr: Point2D = [0, 0];
@@ -36,7 +36,7 @@ function alignOffs2D(side: Side2D, s: Drawing): Point2D {
   return tr;
 }
 
-function alignOffs3D(side: Side3D, s: Shape3D): SimplePoint {
+export function alignOffs3D(side: Side3D, s: Shape3D): SimplePoint {
   let [i, j] = compBdsIdx3D(side);
   let delta = s.boundingBox.bounds[i][j];
   let tr: SimplePoint = [0, 0, 0];
@@ -44,50 +44,30 @@ function alignOffs3D(side: Side3D, s: Shape3D): SimplePoint {
   return tr;
 }
 
-export function alignOffs(side: Side2D, s: Drawing): Point2D;
-export function alignOffs(side: Side3D, s: Shape3D): SimplePoint;
-export function alignOffs
-  (side: Side2D | Side3D, s: Drawing | Shape3D):
-  Point2D | SimplePoint {
-  if (s instanceof Drawing) {
-    return alignOffs2D(side as Side2D, s);
-  } else {
-    return alignOffs3D(side as Side3D, s);
-  }
-}
 
-export function align(side: Side2D, s: Drawing): Drawing;
-export function align(side: Side3D, s: Shape3D): Shape3D;
-export function align
-  (side: Side2D | Side3D, s: Drawing | Shape3D):
-  Drawing | Shape3D {
-  console.log(s.constructor)
-  if (s instanceof Drawing) {
-    return s.translate(alignOffs(side as Side2D, s));
-  } else {
-    return s.translate(alignOffs(side as Side3D, s));
-  }
+export function align2D(side: Side2D, s: Drawing): Drawing {
+  return s.translate(alignOffs2D(side, s));
+}
+export function align3D(side: Side3D, s: Shape3D): Shape3D {
+  return s.translate(alignOffs3D(side, s));
 }
 
 export const project2D = (v: Vector): Point2D => [v.x, v.y];
 
-export function fuseAll(ss: Drawing[]): Drawing;
-export function fuseAll(ss: Shape3D[]): Shape3D;
-export function fuseAll(ss: Drawing[] | Shape3D[]):
-  Drawing | Shape3D {
+export function fuseAll2D(ss: Drawing[]): Drawing {
   if (ss.length == 0)
     throw "fuseAll must be called with non-empty array";
-  //@ts-expect-error
   return ss.reduce((r, x) => r.fuse(x));
-};
+}
+export function fuseAll3D(ss: Shape3D[]): Shape3D {
+  if (ss.length == 0)
+    throw "fuseAll must be called with non-empty array";
+  return ss.reduce((r, x) => r.fuse(x));
+}
 
-export function fusedCopies(s: Drawing, ps: Vector[]): Drawing;
-export function fusedCopies(s: Shape3D, ps: Vector[]): Shape3D;
-export function fusedCopies(s: Drawing | Shape3D, ps: Vector[])
-  : Drawing | Shape3D {
-  if (s instanceof Drawing) {
-    return fuseAll(ps.map(v => s.clone().translate(project2D(v))));
-  } else {
-    return fuseAll(ps.map(v => s.clone().translate(v)));
-  }
+export function fusedCopies2D(s: Drawing, ps: Vector[]): Drawing {
+  return fuseAll2D(ps.map(v => s.clone().translate(project2D(v))));
+}
+export function fusedCopies3D(s: Shape3D, ps: Vector[]): Shape3D {
+  return fuseAll3D(ps.map(v => s.clone().translate(v)));
 }

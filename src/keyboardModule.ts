@@ -1,5 +1,5 @@
 import { replicadLib, parType } from "./prelude"
-import { fusedCopies, project2D } from "./utils"
+import { fusedCopies2D, fusedCopies3D, project2D } from "./utils"
 import { Shape3D } from "replicad"
 
 import layoutM from "./layout"
@@ -23,7 +23,7 @@ export default (rc: replicadLib, par: parType) => {
 
   let keyPositions = mkKeyPositions(rows, cols);
 
-  let plateDrawing = fusedCopies(tile, keyPositions);
+  let plateDrawing = fusedCopies2D(tile, keyPositions);
 
   let stile = tile.clone().sketchOnPlane("XY")
     .extrude(-plateTh).asShape3D();
@@ -51,18 +51,18 @@ export default (rc: replicadLib, par: parType) => {
     rcuv(0.5, rows - 1),
     rcuv(cols - 1.5, rows - 1),
   ];
-  let plateShPos = fusedCopies(plateScrewPos, screws)
-    .fuse(fusedCopies(platePegPos, pegs));
-  let plateShNeg = fusedCopies(plateScrewNeg, screws);
-  let boardShPos = fusedCopies(boardScrewPos, screws)
-    .fuse(fusedCopies(boardPegPos, pegs)
+  let plateShPos = fusedCopies3D(plateScrewPos, screws)
+    .fuse(fusedCopies3D(platePegPos, pegs));
+  let plateShNeg = fusedCopies3D(plateScrewNeg, screws);
+  let boardShPos = fusedCopies3D(boardScrewPos, screws)
+    .fuse(fusedCopies3D(boardPegPos, pegs)
     );
-  let boardShNeg = fusedCopies(boardScrewNeg, screws);
+  let boardShNeg = fusedCopies3D(boardScrewNeg, screws);
 
-  let plateModule = () => fusedCopies(kmplate as Shape3D, keyPositions)
+  let plateModule = () => fusedCopies3D(kmplate as Shape3D, keyPositions)
     .fuse(plateShPos)
     .cut(plateShNeg);
-  let boardModule = () => fusedCopies(kmcontacts, keyPositions)
+  let boardModule = () => fusedCopies3D(kmcontacts, keyPositions)
     .fuse(boardShPos)
     .cut(boardShNeg);
   let offs = {
