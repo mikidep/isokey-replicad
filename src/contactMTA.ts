@@ -1,5 +1,5 @@
 import { replicadLib, parType } from "./prelude"
-import { alignBack, alignFront, alignTop } from "./utils"
+import { align } from "./utils"
 
 const SHEET_TH = 0.318;
 const HOLE_DEPTH_SHEET = 1.5 * SHEET_TH;
@@ -18,12 +18,12 @@ export default (rc: replicadLib, { }: parType) => {
     drawRectangle
   } = rc;
 
-  let hole = alignBack(makeBaseBox(HOLE_W2, HOLE_DEPTH, HOLE_H))
-    .fuse(alignBack(
-      makeBaseBox(HOLE_W, HOLE_DEPTH_SHEET, HOLE_H)
+  let hole = align("3D", makeBaseBox(HOLE_W2, HOLE_DEPTH, HOLE_H), "back")
+    .fuse(align("3D",
+      makeBaseBox(HOLE_W, HOLE_DEPTH_SHEET, HOLE_H), "back"
     ))
-    .fuse(alignBack(
-      makeBaseBox(HOLE_W, HOLE_DEPTH, HOLE_H2 - HOLE_H)
+    .fuse(align("3D",
+      makeBaseBox(HOLE_W, HOLE_DEPTH, HOLE_H2 - HOLE_H), "back"
     ))
     ;
   let wedge = draw()
@@ -37,10 +37,11 @@ export default (rc: replicadLib, { }: parType) => {
     .asShape3D()
     ;
 
-  hole = alignTop(hole)
-    .fuse(alignFront(
+  hole = align("3D", hole, "top")
+    .fuse(align("3D",
       makeBaseBox(1, 3 * SHELL_TH, 2.5)
-        .translateZ(-HOLDER_Z)
+        .translateZ(-HOLDER_Z),
+      "front"
     ))
     .fuse(wedge)
     .translateY(HOLE_DEPTH / 2)

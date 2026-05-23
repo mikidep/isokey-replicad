@@ -1,5 +1,7 @@
 import { replicadLib, parType } from "./prelude"
-import { fusedCopies3D, fusedCopiesDrawing } from "./utils"
+import {
+  fusedCopies3D, fusedCopiesDrawing, project2D
+} from "./utils"
 
 import layoutM from "./layout"
 import switchM from "./switch"
@@ -33,17 +35,17 @@ export default (rc: replicadLib, par: parType) => {
     // @ts-ignore
     .cut(mkSwitchHole());
   let rcuv = (c: number, r: number) => fromUV(c - Math.floor(r / 2), r);
-  let offs = new Vector([0, 8]);
+  let offsscr = new Vector([0, 8]);
   // Masochism
   let screws = [
     new Vector(rcuv(
       Math.ceil(cols / 2) + 0.5,
       Math.ceil(rows / 2) - 1)
-    ).add(offs),
+    ).add(offsscr),
     new Vector(rcuv(
       Math.floor(cols / 2) - 1.5,
       Math.floor(rows / 2) - 1)
-    ).add(offs)
+    ).add(offsscr)
   ];
   let pegs = [
     rcuv(0.5, 0),
@@ -84,6 +86,10 @@ export default (rc: replicadLib, par: parType) => {
   let boardModule = () => fusedCopies3D(kmcontacts, keyPositions)
     .fuse(boardShPos)
     .cut(boardShNeg);
+  let offs = {
+    right: project2D(rcuv(cols, 0)),
+    up: project2D(rcuv(0, rows)),
+  }
 
-  return { boardModule, plateModule, plateDrawing, screws }
+  return { boardModule, plateModule, plateDrawing, screws, offs }
 };

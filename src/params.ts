@@ -9,13 +9,18 @@ const cherryParams = {
   belowPlate: 5
 }
 
+const picoParams = {
+  pinL: 20, // pins on the long sides
+  pinW: 8   // pins on the short side
+}
+
 export const defaultParams = {
   kkd: 21.5,
   plateTh: 2,
   switchParams: cherryParams,
   modSize: {
-    rows: 5,
-    cols: 7
+    rows: 4,
+    cols: 6
   },
   screwD: 3,
   pegD: 3,
@@ -23,5 +28,6 @@ export const defaultParams = {
     d: 4.1,
     h: 4
   },
-  contactH: 11.481
+  contactH: 11.481,
+  ucParams: picoParams
 };

@@ -1,4 +1,22 @@
+import { Shape3D, Drawing, Point2D, Vector } from "replicad"
 import { replicadLib, parType } from "./prelude"
+
+export type ModExport = {
+  boardModule: () => Shape3D,
+  plateModule: () => Shape3D,
+  plateDrawing: Drawing,
+  screws: Point2D[]
+}
+
+export function translateMod(mod: ModExport, offs: Vector)
+  : ModExport {
+  return {
+    boardModule: () => mod.boardModule().translate(offs),
+    plateModule: () => mod.plateModule().translate(offs),
+    plateDrawing: mod.plateDrawing.translate(offs.x, offs.y),
+    screws: mod.screws.map(v => [v[0] + offs.x, v[1] + offs.y])
+  }
+}
 
 export default (rc: replicadLib, par: parType) => {
   let { makeCylinder } = rc;
