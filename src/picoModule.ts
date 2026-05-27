@@ -1,10 +1,11 @@
 import { replicadLib, parType } from "./prelude"
-import { fusedCopies3D, align2D, project2D } from "./utils"
+import utilsM from "./utils"
 
 import modCommonM from "./modCommon"
 import { ModExport } from "./modCommon"
 
 export default (rc: replicadLib, par: parType): ModExport => {
+  let { fusedCopies3D, align2D, project2D } = utilsM(rc, par);
   let { Vector, drawRectangle } = rc;
   let { plateTh } = par;
   let { pinL, pinW } = par.ucParams;

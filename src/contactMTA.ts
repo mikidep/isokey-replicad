@@ -1,5 +1,5 @@
 import { replicadLib, parType } from "./prelude"
-import { align3D } from "./utils"
+import utilsM from "./utils"
 
 const SHEET_TH = 0.318;
 const HOLE_DEPTH_SHEET = 1.5 * SHEET_TH;
@@ -11,12 +11,13 @@ const HOLDER_Z = 5.5;
 const HOLE_W2 = 1.4;
 const SHELL_TH = 0.8;
 
-export default (rc: replicadLib, { }: parType) => {
+export default (rc: replicadLib, par: parType) => {
   let {
     makeBaseBox,
     draw,
     drawRectangle
   } = rc;
+  let { align3D } = utilsM(rc, par);
 
   let hole = align3D("back", makeBaseBox(HOLE_W2, HOLE_DEPTH, HOLE_H))
     .fuse(align3D("back",

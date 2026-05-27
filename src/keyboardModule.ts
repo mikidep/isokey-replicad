@@ -1,5 +1,5 @@
 import { replicadLib, parType } from "./prelude"
-import { fusedCopies2D, fusedCopies3D, project2D } from "./utils"
+import utilsM from "./utils"
 import { Shape3D } from "replicad"
 
 import layoutM from "./layout"
@@ -7,6 +7,7 @@ import switchM from "./switch"
 import modCommonM from "./modCommon"
 
 export default (rc: replicadLib, par: parType) => {
+  let { fusedCopies2D, fusedCopies3D, project2D } = utilsM(rc, par);
   let { Vector } = rc;
   let { plateTh } = par;
   let { rows, cols } = par.modSize;
@@ -22,26 +23,18 @@ export default (rc: replicadLib, par: parType) => {
   } = modCommonM(rc, par);
 
   let keyPositions = mkKeyPositions(rows, cols);
-
   let plateDrawing = fusedCopies2D(tile, keyPositions);
 
-  let stile = tile.clone().sketchOnPlane("XY")
-    .extrude(-plateTh).asShape3D();
-  let kmcontacts = stile.clone()
-    .fuse(swCPos)
-    .cut(swCHoles);
-  let kmplate = stile.clone()
-    .cut(mkSwitchHole());
   let rcuv = (c: number, r: number) => fromUV(c - Math.floor(r / 2), r);
   let offsscr = new Vector([0, 8]);
   // Masochism
   let screws = [
     new Vector(rcuv(
-      Math.ceil(cols / 2) + 0.5,
+      Math.round(cols / 3) - 0.5,
       Math.ceil(rows / 2) - 1)
     ).add(offsscr),
     new Vector(rcuv(
-      Math.floor(cols / 2) - 1.5,
+      Math.round(cols * 2 / 3) - 0.5,
       Math.floor(rows / 2) - 1)
     ).add(offsscr)
   ];
@@ -59,10 +52,18 @@ export default (rc: replicadLib, par: parType) => {
     );
   let boardShNeg = fusedCopies3D(boardScrewNeg, screws);
 
-  let plateModule = () => fusedCopies3D(kmplate as Shape3D, keyPositions)
+  let plateExtr = plateDrawing
+    .offset(-0.2, { lineJoinType: "miter" })
+    .sketchOnPlane("XY")
+    .extrude(-plateTh).asShape3D()
+    ;
+  let plateModule = () => plateExtr
+    .cut(fusedCopies3D(mkSwitchHole(), keyPositions))
     .fuse(plateShPos)
     .cut(plateShNeg);
-  let boardModule = () => fusedCopies3D(kmcontacts, keyPositions)
+  let boardModule = () => plateExtr
+    .fuse(fusedCopies3D(swCPos, keyPositions))
+    .cut(fusedCopies3D(swCHoles, keyPositions))
     .fuse(boardShPos)
     .cut(boardShNeg);
   let offs = {

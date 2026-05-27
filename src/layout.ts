@@ -1,8 +1,9 @@
 import { Vector } from "replicad"
 import { replicadLib, parType } from "./prelude"
-import { range } from "./utils"
+import utilsM from "./utils"
 
 export default (rc: replicadLib, par: parType) => {
+  let { range } = utilsM(rc, par);
   const {
     makePolygon,
     drawFaceOutline,

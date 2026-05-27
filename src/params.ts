@@ -29,5 +29,8 @@ export const defaultParams = {
     h: 4
   },
   contactH: 11.481,
-  ucParams: picoParams
+  ucParams: picoParams,
+  kbPad: 8,
+  boxTh: 1.5,
+  innRnd: 3.5
 };
