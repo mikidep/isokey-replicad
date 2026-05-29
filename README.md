@@ -10,14 +10,19 @@ However, this should work.
 Install deps with
 
 ```bash
-npm i --include=dev
+bun install
 ```
 
 Then start the compilation cycle with
 
 ```bash
-webpack build -c ./webpack.config.ts -w
+bun build ./src/index.ts --outfile ./dist/bundle.js \
+  --format esm --watch
 ```
+
+Lastly, visit <https://studio.replicad.xyz/visualiser> with a Chromium-equivalent browser and point it to `dist/bundle.js`. Everything should magically update as you edit the project.
+
+### For Nix people
 
 If you are a Nix [user](https://en.wikipedia.org/wiki/Addiction) like yours truly, the incantations would be respectively:
 

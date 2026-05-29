@@ -6,10 +6,16 @@ import utilsM from "./utils";
 import { translateMod } from "./modCommon";
 
 function main(rc: replicadLib, par: parType) {
-  let { Vector, EdgeFinder } = rc;
-  let { kbPad, boxTh, innRnd } = par;
   let {
-    alignWithOffs2D, fusedCopies2D,
+    Vector, FaceFinder, EdgeFinder, drawRectangle,
+    drawCircle
+  } = rc;
+  let { kbPad, boxTh, innRnd, contactH, jackD } = par;
+  let { overPlate, belowPlate } = par.switchParams;
+  let { usbHole, pcbTh } = par.ucParams;
+  let {
+    alignWithOffs2D, fusedCopies2D, align2D,
+    alignWith3D,
     drawRectBounds, project2D, faceFinderByNormal
   } = utilsM(rc, par);
   let pico = picoModuleM(rc, par);
@@ -43,6 +49,7 @@ function main(rc: replicadLib, par: parType) {
   ).add(new Vector([0, 0, 0]));
 
   let picoModPlaced = translateMod(pico, picoModOffs);
+  let picoModPlate = picoModPlaced.plateModule();
 
   let boxPeriBds = picoModPlaced.plateDrawing.fuse(kbrect)
     .boundingBox.bounds;
@@ -52,11 +59,11 @@ function main(rc: replicadLib, par: parType) {
     innRnd
   )
 
-  let innH = 30;
+  let innH = overPlate + belowPlate + contactH;
   let boxTop = boxPeri
     .offset(boxTh)
     .sketchOnPlane("XY")
-    .extrude(-innH + boxTh)
+    .extrude(-innH - boxTh)
     .asShape3D()
     .chamfer({
       radius: innRnd,
@@ -68,14 +75,44 @@ function main(rc: replicadLib, par: parType) {
       thickness: boxTh
     })
 
-  return boxTop;
+  let usbHoleCut = align2D("bot",
+    drawRectangle(usbHole.w, usbHole.h, 1))
+    .translate(0, pcbTh)
+    .sketchOnPlane("YZ")
+    .extrude(4 * boxTh)
+    .translateX(-boxTh)
+    .translateZ(-boxTh - overPlate)
+    .translate(picoModOffs)
+    .asShape3D()
 
-  // return [
-  //   totKb,
-  //   picoModPlaced.plateDrawing,
-  //   kbrect,
-  //   boxPeri
-  // ];
+  let jackHoleCut =
+    alignWith3D("left", "right", picoModPlate,
+      alignWith3D("back", "back", boxTop,
+        drawCircle(jackD / 2)
+          .translate(0, pcbTh)
+          .sketchOnPlane("XZ")
+          .extrude(2 * boxTh)
+          .translateZ(-0.5 * boxTh)
+          .asShape3D()))
+      .translateX(-20)
+      .translateZ(-innH / 2 - boxTh)
+
+  let topShell = totKb.punchHole(
+    boxTop, new FaceFinder().inPlane("XY"),
+    { origin: [0, 0] }
+  ).asShape3D()
+    .cut(usbHoleCut)
+    .cut(jackHoleCut.clone())
+    .cut(jackHoleCut.translateX(-30))
+    ;
+
+  console.log(topShell.boundingBox.width)
+
+  return [
+    topShell,
+    picoModPlaced.plateModule()
+      .translateZ(-boxTh - overPlate),
+  ]
 };
 
 export {

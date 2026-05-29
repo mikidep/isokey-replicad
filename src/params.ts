@@ -6,12 +6,16 @@ const cherryParams = {
   snapTh: 1.4,
   snapW: 8,
   snapD: 1,
-  belowPlate: 5
+  belowPlate: 5,
+  overPlate: 6
 }
 
 const picoParams = {
   pinL: 20, // pins on the long sides
-  pinW: 8   // pins on the short side
+  pinW: 8,  // pins on the short side
+  usbHole: { w: 10, h: 4 },
+  pcbTh: 1
+
 }
 
 export const defaultParams = {
@@ -32,5 +36,6 @@ export const defaultParams = {
   ucParams: picoParams,
   kbPad: 8,
   boxTh: 1.5,
-  innRnd: 3.5
+  innRnd: 3.5,
+  jackD: 6.2
 };
