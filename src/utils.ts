@@ -1,6 +1,7 @@
 import { replicadLib, parType } from "./prelude"
 import {
-  Shape3D, Drawing, Point2D, SimplePoint, Vector, FaceFinder
+  Shape3D, Drawing, Point2D, SimplePoint, Vector, FaceFinder,
+  Point
 } from "replicad"
 
 export default (rc: replicadLib, par: parType) => {
@@ -8,6 +9,8 @@ export default (rc: replicadLib, par: parType) => {
 
   // yeesh
   const range = (n: number) => [...Array(n).keys()];
+
+  const V = (v: Point) => new Vector(v)
 
   type Side2D = "left" | "right" | "bot" | "top";
   type Side3D = Side2D | "front" | "back";
@@ -56,7 +59,7 @@ export default (rc: replicadLib, par: parType) => {
     csh: Drawing): Point2D {
     let poff = alignOffs2D(pside, psh);
     let coff = alignOffs2D(cside, csh);
-    return project2D(new Vector(coff).sub(new Vector(poff)));
+    return project2D(V(coff).sub(V(poff)));
   }
 
   /// The offset to apply to csh to align its cside with psh's pside.
@@ -67,7 +70,7 @@ export default (rc: replicadLib, par: parType) => {
     csh: Shape3D): SimplePoint {
     let poff = alignOffs3D(pside, psh);
     let coff = alignOffs3D(cside, csh);
-    return new Vector(coff).sub(new Vector(poff)).toTuple();
+    return V(coff).sub(V(poff)).toTuple();
   }
 
   function align2D(side: Side2D, s: Drawing): Drawing {
@@ -114,7 +117,7 @@ export default (rc: replicadLib, par: parType) => {
   }
   function drawRectBounds(b1: Point2D, b2: Point2D,
     r: number = 0): Drawing {
-    let size = project2D(new Vector(b2).sub(new Vector(b1)));
+    let size = project2D(V(b2).sub(V(b1)));
     return align2D("bot", align2D("left",
       drawRectangle(size[0], size[1], r)))
       .translate(b1[0], b1[1])
@@ -145,7 +148,8 @@ export default (rc: replicadLib, par: parType) => {
     fuseAll3D,
     fusedCopies3D,
     drawRectBounds,
-    faceFinderByNormal
+    faceFinderByNormal,
+    V
   }
 }
 

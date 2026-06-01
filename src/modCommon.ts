@@ -26,12 +26,18 @@ export default (rc: replicadLib, par: parType) => {
   const cylBelow = (r: number, h: number) =>
     makeCylinder(r, h, [0, 0, 0], [0, 0, -1])
 
-  let plateScrewPos = cylBelow(insert.d / 2 + 1.25, belowPlate);
-  let platePegPos = cylBelow(pegD / 2, belowPlate);
-  let plateScrewNeg = cylBelow(insert.d / 2, belowPlate);
-  let boardScrewPos = cylBelow(screwD / 2 + 1, contactH);
-  let boardPegPos = cylBelow(pegD / 2, contactH);
-  let boardScrewNeg = cylBelow(screwD / 2, contactH);
+  const insScrewPos = (h: number) => cylBelow(insert.d / 2 + 1.25, h);
+  const insScrewNeg = (h: number) => makeCylinder(insert.d / 2, insert.h, [0, 0, -h], [0, 0, 1]);
+  const thrScrewPos = (h: number) => cylBelow(screwD / 2 + 1, h);
+  const thrScrewNeg = (h: number) => cylBelow(screwD / 2, h);
+  const pegPos = (h: number) => cylBelow(pegD / 2, h);
+
+  let plateScrewPos = insScrewPos(belowPlate);
+  let platePegPos = pegPos(belowPlate);
+  let plateScrewNeg = insScrewNeg(belowPlate);
+  let boardScrewPos = thrScrewPos(contactH);
+  let boardPegPos = pegPos(contactH);
+  let boardScrewNeg = thrScrewNeg(contactH);
 
   return {
     plateScrewPos,
@@ -40,5 +46,10 @@ export default (rc: replicadLib, par: parType) => {
     boardScrewPos,
     boardScrewNeg,
     boardPegPos,
+    insScrewPos,
+    insScrewNeg,
+    thrScrewPos,
+    thrScrewNeg,
+    pegPos
   }
 };

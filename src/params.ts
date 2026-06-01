@@ -26,7 +26,8 @@ export const defaultParams = {
     rows: 4,
     cols: 6
   },
-  screwD: 3,
+  screwD: 3.2,
+  screwCS: 1.2,
   pegD: 3,
   insert: {
     d: 4.1,

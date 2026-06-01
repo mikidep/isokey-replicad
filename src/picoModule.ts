@@ -5,8 +5,8 @@ import modCommonM from "./modCommon"
 import { ModExport } from "./modCommon"
 
 export default (rc: replicadLib, par: parType): ModExport => {
-  let { fusedCopies3D, align2D, project2D } = utilsM(rc, par);
-  let { Vector, drawRectangle } = rc;
+  let { fusedCopies3D, align2D, project2D, V } = utilsM(rc, par);
+  let { drawRectangle } = rc;
   let { plateTh } = par;
   let { pinL, pinW } = par.ucParams;
   let {
@@ -17,8 +17,8 @@ export default (rc: replicadLib, par: parType): ModExport => {
   } = modCommonM(rc, par);
 
   let screws = [
-    new Vector([-10, 0]),
-    new Vector([-40, 0]),
+    V([-10, 0]),
+    V([-40, 0]),
   ];
   let plateShPos = fusedCopies3D(plateScrewPos, screws);
   let plateShNeg = fusedCopies3D(plateScrewNeg, screws);

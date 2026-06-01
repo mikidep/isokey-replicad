@@ -1,14 +1,12 @@
 import { replicadLib, parType } from "./prelude"
 import utilsM from "./utils"
-import { Shape3D } from "replicad"
 
 import layoutM from "./layout"
 import switchM from "./switch"
 import modCommonM from "./modCommon"
 
 export default (rc: replicadLib, par: parType) => {
-  let { fusedCopies2D, fusedCopies3D, project2D } = utilsM(rc, par);
-  let { Vector } = rc;
+  let { V, fusedCopies2D, fusedCopies3D, project2D } = utilsM(rc, par);
   let { plateTh } = par;
   let { rows, cols } = par.modSize;
   let { fromUV, mkKeyPositions, tile } = layoutM(rc, par);
@@ -26,14 +24,14 @@ export default (rc: replicadLib, par: parType) => {
   let plateDrawing = fusedCopies2D(tile, keyPositions);
 
   let rcuv = (c: number, r: number) => fromUV(c - Math.floor(r / 2), r);
-  let offsscr = new Vector([0, 8]);
+  let offsscr = V([0, 8]);
   // Masochism
   let screws = [
-    new Vector(rcuv(
+    V(rcuv(
       Math.round(cols / 3) - 0.5,
       Math.ceil(rows / 2) - 1)
     ).add(offsscr),
-    new Vector(rcuv(
+    V(rcuv(
       Math.round(cols * 2 / 3) - 0.5,
       Math.floor(rows / 2) - 1)
     ).add(offsscr)
@@ -71,5 +69,8 @@ export default (rc: replicadLib, par: parType) => {
     up: project2D(rcuv(0, rows)),
   }
 
-  return { boardModule, plateModule, plateDrawing, screws, offs }
+  return {
+    boardModule, plateModule,
+    plateDrawing, screws: screws.map(project2D), offs
+  }
 };

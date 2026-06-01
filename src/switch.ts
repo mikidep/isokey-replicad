@@ -1,15 +1,16 @@
 import { Shape3D } from "replicad"
 import { replicadLib, parType } from "./prelude"
 import contactM from "./contactMTA"
+import utilsM from "./utils"
 
 export default (rc: replicadLib, par: parType) => {
   const {
     drawRectangle,
     drawCircle,
-    Vector
   } = rc;
 
   let { hole, pos } = contactM(rc, par);
+  let { V } = utilsM(rc, par);
 
   const {
     plateTh,
@@ -35,9 +36,9 @@ export default (rc: replicadLib, par: parType) => {
     return box.fuse(snapBox);
   };
 
-  let c1p = new Vector([0, 5.9]);
-  let c2p = new Vector([5, 3.8]);
-  let c3p = new Vector([-3, -5.9]);
+  let c1p = V([0, 5.9]);
+  let c2p = V([5, 3.8]);
+  let c3p = V([-3, -5.9]);
 
   let place = (s: Shape3D) => s.clone().translate(c1p)
     .fuse(s.clone().translate(c2p))

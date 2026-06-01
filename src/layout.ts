@@ -3,11 +3,10 @@ import { replicadLib, parType } from "./prelude"
 import utilsM from "./utils"
 
 export default (rc: replicadLib, par: parType) => {
-  let { range } = utilsM(rc, par);
+  let { V, range } = utilsM(rc, par);
   const {
     makePolygon,
     drawFaceOutline,
-    Vector
   } = rc;
 
   const forSetUV = (u: Vector, v: Vector) => {
@@ -39,9 +38,9 @@ export default (rc: replicadLib, par: parType) => {
     kkd,
   } = par;
 
-  let u = new Vector([1, 0]).multiply(kkd);
-  let v = new Vector([0.5, Math.sqrt(3) / 2]).multiply(kkd);
-  let xi = new Vector([0.5, Math.sqrt(3) / 6]).multiply(kkd);
+  let u = V([1, 0]).multiply(kkd);
+  let v = V([0.5, Math.sqrt(3) / 2]).multiply(kkd);
+  let xi = V([0.5, Math.sqrt(3) / 6]).multiply(kkd);
 
   return forSetUV(u, v);
 }
