@@ -21,7 +21,7 @@ export default (rc: replicadLib, par: parType) => {
     snapD,
     snapW,
     switchSide
-  } = par.switchParams;
+  } = par.switches.mxParams;
 
   const mkSwitchHole = (sketchFn = (dr: any) => dr.sketchOnPlane("XY")) => {
     let box = sketchFn(
@@ -46,21 +46,22 @@ export default (rc: replicadLib, par: parType) => {
     ;
   let holeDr = (d: number) => drawCircle(d / 2);
 
+  // Looks like the holes layout for the choc v1
   let stemHole = holeDr(3.2)
     .fuse(holeDr(1.5).translate(5.5, 0))
     .fuse(holeDr(1.5).translate(-5.5, 0))
     .sketchOnPlane("XY")
     .extrude(-20)
+    .asShape3D()
     ;
 
   let swCHoles = place(hole)
-    // @ts-ignore
     .fuse(stemHole);
   let swCPos = place(pos);
 
   return {
-    mkSwitchHole: mkSwitchHole,
-    swCHoles: swCHoles,
-    swCPos: swCPos
+    mkSwitchHole,
+    swCHoles,
+    swCPos
   };
 }

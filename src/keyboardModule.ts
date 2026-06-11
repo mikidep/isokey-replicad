@@ -2,7 +2,7 @@ import { replicadLib, parType } from "./prelude"
 import utilsM from "./utils"
 
 import layoutM from "./layout"
-import switchM from "./switch"
+import switchM from "./switchChocV1"
 import modCommonM from "./modCommon"
 
 export default (rc: replicadLib, par: parType) => {
