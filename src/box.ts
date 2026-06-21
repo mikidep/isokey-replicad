@@ -9,8 +9,9 @@ export default (rc: replicadLib, par: parType) => {
   let {
     FaceFinder, EdgeFinder, drawRectangle, drawCircle
   } = rc;
-  let { kbPad, boxTh, innRnd, contactH,
-    jackD, insert, screwD, screwCS } = par;
+  let { kbPad, boxTh, innRnd,
+    jackD, insert, screwCS } = par;
+  let { contactH } = par.contact;
   let { overPlate, belowPlate } = par.switchParams;
   let { usbHole, pcbTh } = par.ucParams;
   let {

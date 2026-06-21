@@ -1,16 +1,6 @@
 import { replicadLib, parType } from "./prelude"
 import utilsM from "./utils"
 
-const SHEET_TH = 0.318;
-const HOLE_DEPTH_SHEET = 1.5 * SHEET_TH;
-const HOLE_DEPTH = 1.8;
-const HOLE_H = 7.3;
-const HOLE_H2 = 8.7;
-const HOLE_W = 3;
-const HOLDER_Z = 5.5;
-const HOLE_W2 = 1.4;
-const SHELL_TH = 0.8;
-
 export default (rc: replicadLib, par: parType) => {
   let {
     makeBaseBox,
@@ -19,38 +9,50 @@ export default (rc: replicadLib, par: parType) => {
   } = rc;
   let { align3D } = utilsM(rc, par);
 
-  let hole = align3D("back", makeBaseBox(HOLE_W2, HOLE_DEPTH, HOLE_H))
+  let {
+    sheetTh,
+    shellTh,
+    holeDepth,
+    holeW,
+    holeW2,
+    holeH,
+    holeH2,
+    holderZ
+  } = par.contact;
+
+  let holeDepthSheet = 1.5 * sheetTh;
+  let hole = align3D("back", makeBaseBox(holeW2, holeDepth, holeH))
     .fuse(align3D("back",
-      makeBaseBox(HOLE_W, HOLE_DEPTH_SHEET, HOLE_H)))
+      makeBaseBox(holeW, holeDepthSheet, holeH)))
     .fuse(align3D("back",
-      makeBaseBox(HOLE_W, HOLE_DEPTH, HOLE_H2 - HOLE_H)))
+      makeBaseBox(holeW, holeDepth, holeH2 - holeH)))
     ;
   let wedge = draw()
-    .lineTo([-SHELL_TH, 0])
+    .lineTo([-shellTh, 0])
     .lineTo([0, -2])
     .close()
     .sketchOnPlane("YZ")
-    .extrude(HOLE_W2)
-    .translateX(-HOLE_W2 / 2)
-    .translateY(-HOLE_DEPTH)
+    .extrude(holeW2)
+    .translateX(-holeW2 / 2)
+    .translateY(-holeDepth)
     .asShape3D()
     ;
 
   hole = align3D("top", hole)
     .fuse(align3D("front",
-      makeBaseBox(1, 3 * SHELL_TH, 2.5).translateZ(-HOLDER_Z)))
+      makeBaseBox(1, 3 * shellTh, 2.5).translateZ(-holderZ)))
     .fuse(wedge)
-    .translateY(HOLE_DEPTH / 2)
+    .translateY(holeDepth / 2)
     ;
 
   let posFace1 = drawRectangle(
-    HOLE_W + 2 * SHELL_TH,
-    HOLE_DEPTH + 2 * SHELL_TH
+    holeW + 2 * shellTh,
+    holeDepth + 2 * shellTh
   );
   let posFace2 = posFace1.clone().scale(1.4);
   let pos = posFace2.sketchOnPlane("XY")
     // @ts-ignore
-    .loftWith(posFace1.sketchOnPlane("XY", -HOLE_H))
+    .loftWith(posFace1.sketchOnPlane("XY", -holeH))
     ;
 
   return {

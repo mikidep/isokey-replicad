@@ -20,7 +20,8 @@ export function translateMod(mod: ModExport, offs: Vector)
 
 export default (rc: replicadLib, par: parType) => {
   let { makeCylinder } = rc;
-  let { screwD, contactH, pegD, insert } = par;
+  let { screwD, pegD, insert } = par;
+  let { contactH } = par.contact;
   let { belowPlate } = par.switchParams;
 
   const cylBelow = (r: number, h: number) =>

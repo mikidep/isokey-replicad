@@ -26,6 +26,18 @@ const picoParams = {
   pcbTh: 1
 }
 
+const contactMTA100 = {
+  sheetTh: 0.318,
+  shellTh: 0.8,
+  holeDepth: 1.8,
+  holeW: 3,
+  holeW2: 1.4,
+  holeH: 7.3,
+  holeH2: 8.7,
+  holderZ: 5.5,
+  contactH: 11.481
+}
+
 export const defaultParams = {
   kkd: 21.5,
   plateTh: 2,
@@ -42,7 +54,7 @@ export const defaultParams = {
     d: 4.4,
     h: 4
   },
-  contactH: 11.481,
+  contact: contactMTA100,
   ucParams: picoParams,
   kbPad: 8,
   boxTh: 1.5,
